@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,7 +28,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{cardNumber}")
-    public List<TransactionDto> findByCardNumber(@PathVariable Long cardNumber) {
+    public List<TransactionDto> findByCardNumber(@PathVariable Long cardNumber) throws IOException {
         return this.transactionService.findByCardNumber(cardNumber);
     }
 

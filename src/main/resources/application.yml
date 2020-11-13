@@ -1,6 +1,23 @@
 spring:
   data:
     mongodb:
-      database: fiap
+      database: transactions
       port: 27017
       host: localhost
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: <>
+    password: <>
+    port: 587
+    subject: Transacao
+    to: <>
+    from: <>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+    test-connection: false
