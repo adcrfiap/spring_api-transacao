@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      database: transactions
+      database: springProject36SCJ
       port: 27017
       host: localhost
   mail:
