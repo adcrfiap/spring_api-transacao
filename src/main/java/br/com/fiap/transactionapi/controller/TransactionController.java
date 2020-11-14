@@ -28,7 +28,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{cardNumber}")
-    public List<TransactionDto> findByCardNumber(@PathVariable Long cardNumber) throws IOException {
+    public List<TransactionDto> findByCardNumber(@PathVariable String cardNumber) throws IOException {
         return this.transactionService.findByCardNumber(cardNumber);
     }
 

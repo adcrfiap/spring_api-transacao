@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudentDTO {
 
-    private String name;
-    private Integer rm;
-    private Integer cardNumber;
+    private  String nome;
+    private  String rm;
+    private  String numeroCartao;
 }

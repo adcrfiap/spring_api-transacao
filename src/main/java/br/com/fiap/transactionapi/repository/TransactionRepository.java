@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
 
-    Optional<List<Transaction>> findByCardNumber(Long cardNumber);
+    Optional<List<Transaction>> findByCardNumber(String cardNumber);
 
 }

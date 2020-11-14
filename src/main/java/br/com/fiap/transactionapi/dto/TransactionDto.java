@@ -11,7 +11,7 @@ public class TransactionDto {
 
     private String id;
 
-    private Long cardNumber;
+    private String cardNumber;
 
     private String locale;
 

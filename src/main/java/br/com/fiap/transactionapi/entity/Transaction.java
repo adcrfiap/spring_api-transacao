@@ -15,7 +15,7 @@ public class Transaction {
     @Id
     private String id;
 
-    private Long cardNumber;
+    private String cardNumber;
 
     @CreatedDate
     private Date date;

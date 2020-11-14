@@ -11,6 +11,6 @@ public interface TransactionService {
 
     List<TransactionDto> findAll();
 
-    List<TransactionDto> findByCardNumber(Long cardNumber) throws IOException;
+    List<TransactionDto> findByCardNumber(String cardNumber) throws IOException;
 
 }

@@ -1,5 +1,6 @@
 package br.com.fiap.transactionapi.service.impl;
 
+import br.com.fiap.transactionapi.config.email.EmailConfig;
 import br.com.fiap.transactionapi.dto.StudentDTO;
 import br.com.fiap.transactionapi.dto.TransactionDto;
 import br.com.fiap.transactionapi.entity.Transaction;
@@ -7,6 +8,8 @@ import br.com.fiap.transactionapi.repository.TransactionRepository;
 import br.com.fiap.transactionapi.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
@@ -27,7 +30,11 @@ public class TransactionServiceImpl implements TransactionService {
     private final ModelMapper mapper;
     private WebClient webClient;
     private final TransactionRepository transactionRepository;
-    private JavaMailSender mailSender;
+
+    @Autowired
+    private EmailConfig emailConfig;
+
+
 
     @Override
     public TransactionDto create(TransactionDto transactionDto) {
@@ -42,7 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDto> findByCardNumber(Long cardNumber) throws IOException {
+    public List<TransactionDto> findByCardNumber(String cardNumber) throws IOException {
         List<Transaction> transactions = this.transactionRepository.findByCardNumber(cardNumber)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         send(mapListTransaction(transactions), cardNumber);
@@ -55,32 +62,24 @@ public class TransactionServiceImpl implements TransactionService {
                 .collect(Collectors.toList());
     }
 
-    private void send(List<TransactionDto> listTransaction, Long cardNumber) throws IOException {
+    private void send(List<TransactionDto> listTransaction, String cardNumber) throws IOException {
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        simpleMailMessage.setFrom("dkchevis@gmail.com");
-        simpleMailMessage.setTo("dkchevi@hotmail.com");
+        String emailBody = createEmailBody(listTransaction, cardNumber);
 
-        simpleMailMessage.setText(createEmailBody(listTransaction, cardNumber));
-        simpleMailMessage.setSubject("Transação - Extrato");
+        emailConfig.send(emailBody);
 
-        try {
-            mailSender.send(simpleMailMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    private String createEmailBody(List<TransactionDto> listTransaction, Long cardNumber) {
+    private String createEmailBody(List<TransactionDto> listTransaction, String cardNumber) {
         StringBuilder extrato = new StringBuilder();
         StudentDTO student = searchStudent(cardNumber);
 
-        extrato.append("Nome: " + student.getName())
+        extrato.append("Nome: " + student.getNome())
                 .append(System.lineSeparator())
                 .append("RM: " + student.getRm())
                 .append(System.lineSeparator())
-                .append("Numero do cartão: " + student.getCardNumber())
+                .append("Numero do cartão: " + student.getNumeroCartao())
                 .append(System.lineSeparator())
                 .append("Extrato completo de transações");
 
@@ -98,13 +97,13 @@ public class TransactionServiceImpl implements TransactionService {
         return extrato.toString();
     }
 
-    private StudentDTO searchStudent(Long cardNumber){
+    private StudentDTO searchStudent(String cardNumber){
         StudentDTO student = new StudentDTO();
 
         try {
             Mono<StudentDTO> monoAluno = webClient
                     .method(HttpMethod.GET)
-                    .uri("/alunos/"+cardNumber)
+                    .uri("http://localhost:8888/alunos/"+cardNumber)
                     .retrieve().bodyToMono(StudentDTO.class);
 
             student = monoAluno.block();
